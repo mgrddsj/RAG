@@ -6,3 +6,5 @@ build/
 .venv/
 *.json
 plots/
+multirag/__pycache__/
+multirag/*/__pycache__/

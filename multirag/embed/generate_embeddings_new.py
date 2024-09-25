@@ -26,8 +26,45 @@ from multirag.dataset import (
     QueryEncoder,
     load_queries
 )
+from multirag.dataset.cram_dataset import Data, load_data
 
 Embedding = list[float]
+
+# TODO: Write data classes for the CrAM embeddings
+@dataclass(frozen=True)
+class CrAMEmbeddings:
+    """
+    Data class to store the CrAM embeddings.
+    """
+    cram_embeddings: list[Embedding]
+
+    @classmethod
+    def from_dict(cls, emb_dict: dict):
+        return cls(**emb_dict)
+    
+@dataclass(frozen=True)
+class CrAMLayerEmbeddings:
+    """
+    Data class to store the CrAM embeddings of a layer.
+    """
+    cram_embeddings: list[CrAMEmbeddings]
+
+    @classmethod
+    def from_dict(cls, emb_dict: dict):
+        return cls(**emb_dict)
+    
+
+@dataclass(frozen=True)
+class CrAMEmbeddingWithCredibility:
+    """
+    Data class to store the CrAM embeddings with credibility.
+    """
+    cram_embeddings: CrAMEmbeddings
+    credibility: float
+
+    @classmethod
+    def from_dict(cls, emb_dict: dict):
+        return cls(**emb_dict)
 
 
 @dataclass(frozen=True)
@@ -196,6 +233,11 @@ class EmbeddingModel:
                 if layer_idx in self.target_layers:
                     # retrieve cached input from custom module
                     attn_heads = layer.self_attn.o_proj.last_input[0][-1]
+
+                    # TODO: Modify the attention heads with CrAM
+                    
+
+                    # split the attention heads into 128 parts
                     layer_embeddings = LayerEmbeddings(
                         attention_heads=split(attn_heads.tolist(), 128),
                     )
@@ -396,6 +438,9 @@ def generate_embeddings(
     """
     articles: list[Article] = load_articles(article_path)
     queries: list[Query] = load_queries(query_path, articles)
+    data: list[Data] = load_data(article_path)
+
+    # TODO: Modify the embedding generation with CrAM
 
     try:
         article_embeddings, query_embeddings = _load_embeddings(export_path, articles)

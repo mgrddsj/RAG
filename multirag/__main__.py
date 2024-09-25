@@ -379,10 +379,10 @@ def _initialize_db(args) -> VectorDB:
 
 def handle_db(args) -> None:
     if args.action == 'start':
-        subprocess.run(["docker-compose", "-f", args.config, "up", "-d"])
+        subprocess.run(["docker", "compose", "-f", args.config, "up", "-d"])
         return
     elif args.action == 'stop':
-        subprocess.run(["docker-compose", "-f", args.config, "down"])
+        subprocess.run(["docker", "compose", "-f", args.config, "down"])
         return
 
     try:
